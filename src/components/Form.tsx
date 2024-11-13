@@ -8,14 +8,17 @@ type FormProps = {
     dispatch: Dispatch<ActivityAction>
 }
 
+const initialActivity: Activity = {
+    id: 'sss', //TODO: Agregar el v4 --> npm i uud, npm i --save-dev @types/uuid
+    category: 1,
+    name: '',
+    calories: 0
+}
 
-export default function Form({dispatch} :FormProps) {
 
-    const [activity, setActivity] = useState<Activity>({
-        category: 1,
-        name: '',
-        calories: 0
-    })
+export default function Form({ dispatch }: FormProps) {
+
+    const [activity, setActivity] = useState<Activity>(initialActivity)
 
     const handleChange = (e: ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLSelectElement>) => {
 
@@ -35,8 +38,13 @@ export default function Form({dispatch} :FormProps) {
 
     const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault()
-        
-        dispatch({type:'save-activity', payload:{newActivity: activity}})
+
+        dispatch({ type: 'save-activity', payload: { newActivity: activity } })
+
+        setActivity({
+            ...initialActivity,
+            id: 'sss' //TODO: Agregar la funcion vs4 -> uuid4()
+        })
 
     }
 

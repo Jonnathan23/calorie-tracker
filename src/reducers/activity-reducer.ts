@@ -12,8 +12,12 @@ export const initialState:ActivityState = {
 }
 
 export const activityReducer = (state: ActivityState = initialState, action: ActivityAction) => {
-    if(action.type === 'save-activity'){
-        console.log('Dedesde el type de save-activity')
+    if(action.type === 'save-activity'){       
+
+        return {
+            ...state,
+            activities: [...state.activities, action.payload.newActivity]
+        }
     }
 
     return state
