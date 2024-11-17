@@ -2,7 +2,10 @@ import { Activity } from "../types"
 
 export type ActivityAction =
     { type: 'save-activity', payload: { newActivity: Activity } } |
-    { type: 'set-activeId', payload: { id: Activity['id'] } }
+    { type: 'set-activeId', payload: { id: Activity['id'] } } |
+    { type: 'delete-activeId', payload: { id: Activity['id'] } } |
+    { type: 'restart-app' }
+
 
 
 export type ActivityState = {
@@ -10,8 +13,13 @@ export type ActivityState = {
     activeId: Activity['id']
 }
 
+const localStorageActivities = (): Activity[] => {
+    const activities = localStorage.getItem('activities')
+    return activities ? JSON.parse(activities) : []
+}
+
 export const initialState: ActivityState = {
-    activities: [],
+    activities: localStorageActivities(),
     activeId: ''
 }
 
@@ -19,18 +27,18 @@ export const activityReducer = (state: ActivityState = initialState, action: Act
 
     if (action.type === 'save-activity') {
 
-        let updatetivities: Activity[] = []
+        let updateActivities: Activity[] = []
 
         if (state.activeId) {
-            updatetivities = state.activities.map(activity => state.activeId === activity.id ? action.payload.newActivity : activity)
+            updateActivities = state.activities.map(activity => state.activeId === activity.id ? action.payload.newActivity : activity)
 
         } else {
-            updatetivities = [...state.activities, action.payload.newActivity]
+            updateActivities = [...state.activities, action.payload.newActivity]
         }
 
         return {
             ...state,
-            activities: updatetivities,
+            activities: updateActivities,
             activeId: ''
         }
     }
@@ -41,6 +49,23 @@ export const activityReducer = (state: ActivityState = initialState, action: Act
             activeId: action.payload.id
         }
 
+    }
+
+    if (action.type === 'delete-activeId') {
+        const activityDeleted = state.activities.filter(activity => activity.id !== action.payload.id)
+
+        return {
+            ...state,
+            activities: activityDeleted,
+            activeId: ''
+        }
+    }
+
+    if (action.type === 'restart-app') {
+        return {
+            activities: [],
+            activeId: ''
+        }
     }
 
     return state
