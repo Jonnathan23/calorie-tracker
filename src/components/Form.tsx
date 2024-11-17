@@ -1,24 +1,34 @@
 
-import { useState, ChangeEvent, FormEvent, Dispatch } from "react"
+import { useState, ChangeEvent, FormEvent, Dispatch, useEffect } from "react"
+import { v4 as uuidv4 } from 'uuid';
 import { categories } from "../data/categories"
 import { Activity } from "../types"
-import { ActivityAction } from "../reducers/activity-reducer"
+import { ActivityAction, ActivityState } from "../reducers/activity-reducer"
 
 type FormProps = {
     dispatch: Dispatch<ActivityAction>
+    state: ActivityState
 }
 
 const initialActivity: Activity = {
-    id: 'sss', //TODO: Agregar el v4 --> npm i uud, npm i --save-dev @types/uuid
+    id: uuidv4(),
     category: 1,
     name: '',
     calories: 0
 }
 
 
-export default function Form({ dispatch }: FormProps) {
+export default function Form({ dispatch, state }: FormProps) {
 
     const [activity, setActivity] = useState<Activity>(initialActivity)
+
+    useEffect(() => {
+        if (state.activeId) {
+            const selectedActivity = state.activities.filter(stateActivity => stateActivity.id === state.activeId)[0]
+            setActivity(selectedActivity)
+        }
+
+    }, [state.activeId])
 
     const handleChange = (e: ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLSelectElement>) => {
 
@@ -43,7 +53,7 @@ export default function Form({ dispatch }: FormProps) {
 
         setActivity({
             ...initialActivity,
-            id: 'sss' //TODO: Agregar la funcion vs4 -> uuid4()
+            id: uuidv4()
         })
 
     }
